@@ -1,7 +1,9 @@
 //const express = require("express");
 import express from "express";
 //const pool = require("./db");
-import pool from "./db.js";
+import {pool} from "./db.js";
+import * as housesRepository from "./repositories/houses.repository.js";
+import * as housesController from"./controllers/houses.controllers.js"
 const app = express();
 const port = 3000;
 
@@ -9,23 +11,17 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json()); // parse JSON bodies
 //HOUSES
 //READ ALLE HUSENE
-app.get("/houses", async (req, res) => {
-  try {
-    const result = await pool.query("Select * from houses");
-    console.log(result.rows);
-    res.status(200).json(result.rows);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Database error", code: error.code });
-  }
-});
+app.get("/houses", housesController.getAllHouses );
 //READ ETT HUS
 app.get("/houses/:id", async (req, res) => {
   try {
-    const one = await pool.query("SELECT id, name, color, founder FROM houses WHERE id = $1", [req.params.id]);
-    if (one.rowCount === 0) return res.sendStatus(404);
-
-    res.status(200).json(one.rows[0]);
+    const id = req.params.id;
+    const house = await housesRepository.getHouseById(id);
+    if (house) {
+      res.status(200).json(house);
+    } else {
+      res.sendStatus(404);
+    }
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Database error" });
