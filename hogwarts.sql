@@ -201,3 +201,37 @@ ALTER TABLE ONLY public.teachers
 --
 
 
+pibrunak-fagerlund@unknown1a4db207f3f8 backend-hogwards-master % app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`);
+});
+zsh: parse error near `}'
+pibrunak-fagerlund@unknown1a4db207f3f8 backend-hogwards-master % CREATE TABLE courses (
+  id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  name varchar(100) NOT NULL,
+  teacher_id integer REFERENCES teachers(id) ON DELETE SET NULL
+);
+
+INSERT INTO courses (name, teacher_id) VALUES
+  ('Potions', 1),
+  ('Transfiguration', 2);
+zsh: parse error near `,'
+pibrunak-fagerlund@unknown1a4db207f3f8 backend-hogwards-master % \q
+zsh: command not found: q
+pibrunak-fagerlund@unknown1a4db207f3f8 backend-hogwards-master % 
+pibrunak-fagerlund@unknown1a4db207f3f8 backend-hogwards-master % /Applications/Postgres.app/Contents/Versions/latest/bin/psql -d hogwarts
+psql (18.6 (Postgres.app))
+Type "help" for help.
+
+hogwarts=# CREATE TABLE courses (
+hogwarts(#   id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+hogwarts(#   name varchar(100) NOT NULL,
+hogwarts(#   teacher_id integer REFERENCES teachers(id) ON DELETE SET NULL
+hogwarts(# );
+CREATE TABLE
+hogwarts=# 
+hogwarts=# INSERT INTO courses (name, teacher_id) VALUES
+hogwarts-#   ('Potions', 1),
+hogwarts-#   ('Transfiguration', 2);
+INSERT 0 2
+hogwarts=# \q
+pibrunak-fagerlund@unknown1a4db207f3f8 backend-hogwards-master % 
