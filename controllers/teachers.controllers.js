@@ -1,56 +1,37 @@
 import * as teachersRepository from "../repositories/teachers.repository.js";
+import * as coursesRepository from "../repositories/courses.repository.js";
+import { HTTPError } from "../errors/HTTPError.js";
 
 export const getAllTeachers = async (req, res) => {
-  try {
-    const teachers = await teachersRepository.getAllTeachers();
-    res.status(200).json(teachers);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Database error" });
-  }
+  const teachers = await teachersRepository.getAllTeachers();
+  res.status(200).json(teachers);
 };
 
 export const getTeacherById = async (req, res) => {
-  try {
-    const teacher = await teachersRepository.getTeacherById(req.params.id);
-    if (!teacher) return res.sendStatus(404);
-    res.status(200).json(teacher);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Database error" });
-  }
+  const teacher = await teachersRepository.getTeacherById(req.params.id);
+  if (!teacher) throw new HTTPError(404, "No teacher with given id");
+  res.status(200).json(teacher);
 };
 
 export const createTeacher = async (req, res) => {
-  try {
-    const { name, house } = req.body;
-    const teacher = await teachersRepository.createTeacher(name, house);
-    res.status(201).json(teacher);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Database error" });
-  }
+  const { name, house } = req.body;
+  const teacher = await teachersRepository.createTeacher(name, house);
+  res.status(201).json(teacher);
 };
 
 export const updateTeacher = async (req, res) => {
-  try {
-    const { name, house } = req.body;
-    const teacher = await teachersRepository.updateTeacher(req.params.id, name, house);
-    if (!teacher) return res.sendStatus(404);
-    res.status(200).json(teacher);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Database error" });
-  }
+  const { name, house } = req.body;
+  const teacher = await teachersRepository.updateTeacher(req.params.id, name, house);
+  if (!teacher) throw new HTTPError(404, "No teacher with given id");
+  res.status(200).json(teacher);
 };
 
 export const deleteTeacher = async (req, res) => {
-  try {
-    const deleted = await teachersRepository.deleteTeacher(req.params.id);
-    if (deleted === 0) return res.sendStatus(404);
-    res.sendStatus(204);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Database error" });
+  const courses = await coursesRepository.getCoursesByTeacherId(req.params.id);
+  if (courses.length > 0) {
+    throw new HTTPError(409, "Teacher is assigned to a course and cannot be deleted");
   }
+  const deleted = await teachersRepository.deleteTeacher(req.params.id);
+  if (deleted === 0) throw new HTTPError(404, "No teacher with given id");
+  res.sendStatus(204);
 };

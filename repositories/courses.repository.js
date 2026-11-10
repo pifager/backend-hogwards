@@ -33,3 +33,8 @@ export async function deleteCourse(id) {
   const result = await pool.query("DELETE FROM courses WHERE id = $1", [id]);
   return result.rowCount;
 }
+
+export async function getCoursesByTeacherId(teacherId) {
+  const result = await pool.query("SELECT * FROM courses WHERE teacher_id = $1", [teacherId]);
+  return result.rows;
+}

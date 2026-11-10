@@ -1,22 +1,17 @@
 import * as housesRepository from "../repositories/houses.repository.js";
+import { HTTPError } from "../errors/HTTPError.js";
 
 export const getAllHouses = async (req, res) => {
-  try {
-    const houses = await housesRepository.getAllHouses();
-    res.status(200).json(houses);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Database error" });
-  }
+  const houses = await housesRepository.getAllHouses();
+  res.status(200).json(houses);
 };
 
 export const getHouseById = async (req, res) => {
-  try {
-    const house = await housesRepository.getHouseById(req.params.id);
-    if (!house) return res.sendStatus(404);
-    res.status(200).json(house);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Database error" });
-  }
+  const house = await housesRepository.getHouseById(req.params.id);
+  if (!house) throw new HTTPError(404, "No house with given id");
+  res.status(200).json(house);
+};
+
+export const deleteHouse = async (req, res) => {
+  throw new HTTPError(405, "Houses cannot be deleted");
 };
